@@ -19,6 +19,7 @@
 
 package org.mapfish.print.map;
 
+import org.mapfish.print.Constants;
 import org.mapfish.print.RenderingContext;
 import org.pvalsecc.concurrent.BlockingSimpleTarget;
 import org.pvalsecc.concurrent.OrderedResultsExecutor;
@@ -59,6 +60,8 @@ public class ParallelMapTileLoader implements OrderedResultsExecutor.ResultColle
      * Number of tiles scheduled
      */
     private int nbTiles = 0;
+    
+    private Exception exception = null;
 
     public ParallelMapTileLoader(RenderingContext context, PdfContentByte dc) {
         executor = context.getConfig().getMapRenderingExecutor();
@@ -109,9 +112,17 @@ public class ParallelMapTileLoader implements OrderedResultsExecutor.ResultColle
                         dc.restoreState();
                     }
                 }
+            } else if (context.getConfig().getBrokenUrlPlaceholder().equalsIgnoreCase(Constants.ImagePlaceHolderConstants.THROW)) {
+            	System.out.println("Handle throw...");
+            	exception = mapTileTaskResult.getException();
+            	target.addDone(target.getTarget() - target.getCount());
             }
         } finally {
             target.addDone(1);
         }
+    }
+    
+    public Exception getException() {
+    	return exception;
     }
 }
