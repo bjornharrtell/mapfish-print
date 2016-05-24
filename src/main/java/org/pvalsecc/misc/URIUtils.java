@@ -29,6 +29,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.util.URIUtil;
+
 public abstract class URIUtils {
     public static Map<String, List<String>> getParameters(URI uri) throws URISyntaxException, UnsupportedEncodingException {
         return getParameters(uri.getRawQuery());
@@ -118,7 +121,11 @@ public abstract class URIUtils {
             }
             result.append(URLEncoder.encode(key, "UTF-8"));
             result.append("=");
-            result.append(URLEncoder.encode(val, "UTF-8"));
+            try {
+				result.append(URIUtil.encodeQuery(val, "UTF-8"));
+			} catch (URIException e) {
+				throw new UnsupportedEncodingException();
+			}
         }
         return first;
     }
