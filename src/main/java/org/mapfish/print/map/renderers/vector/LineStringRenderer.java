@@ -37,9 +37,8 @@ public class LineStringRenderer extends GeometriesRenderer<LineString> {
     protected static void applyStyle(RenderingContext context, PdfContentByte dc, PJsonObject style, PdfGState state) {
         if (style == null) return;
 
-        if (style.optString("strokeColor") != null) {
-            dc.setColorStroke(ColorWrapper.convertColor(style.getString("strokeColor")));
-        }
+        String strokeColor = style.optString("strokeColor", "black");
+        dc.setColorStroke(ColorWrapper.convertColor(strokeColor));
         if (style.optString("strokeOpacity") != null) {
             state.setStrokeOpacity(style.getFloat("strokeOpacity"));
         }
